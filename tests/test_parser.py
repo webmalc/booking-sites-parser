@@ -1,24 +1,78 @@
-# -*- coding: utf-8 -*-
 """
 Test suite for the parser
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterator
 
-from booking_sites_parser import Parser, Property
+import pytest
+
+from booking_sites_parser import BaseSource, Parser, ParserException, Property
+from booking_sites_parser.sources.airbnb import Airbnb
 
 
-def test_parser_initialization(base_parser):
+def test_parser_initialization(base_parser: Parser):
     """
     The parser should be able to create
     """
     assert isinstance(base_parser, Parser)
+    assert isinstance(base_parser._sources[0], Airbnb)  # pylint: disable=W0212
 
 
-def test_parser_method_results(base_parser):
+def test_parser_method_results(base_parser: Parser):
     """
     Parse method should return an iterable object with results
     """
     properties = base_parser.parse(['one', 'two', 'three'])
-    assert isinstance(properties, Iterable)
-    assert isinstance(next(properties), Property)
+
+    assert isinstance(properties, Iterator)
+    result = next(properties)
+    assert isinstance(result, Property)
+
+
+def test_get_source(base_parser: Parser):
+    """
+    Get_source should return a source by a source ID
+    """
+    source_id, airbnb = base_parser.get_source('airbnb')
+
+    assert source_id == 0
+    assert isinstance(airbnb, Airbnb)
+    airbnb.id = 'test_val'
+    assert base_parser._sources[0].id == 'test_val'  # pylint: disable=W0212
+
+
+def test_get_source_with_invalid_id(base_parser: Parser):
+    """
+    Get_sourcee method should raise an exception
+    when it's given an invalid source ID
+    """
+    with pytest.raises(ParserException) as exception:
+        base_parser.get_source('invalid_source_id')
+
+    assert 'id=invalid_source_id' in str(exception.value)
+
+
+def test_set_source_add(base_parser: Parser, additional_source: BaseSource):
+    """
+    Set_source should add a new source to the sources list
+    """
+    sources_list = base_parser._sources  # pylint: disable=W0212
+    sources_len = len(sources_list)
+    base_parser.set_source(additional_source)
+
+    assert len(sources_list) == sources_len + 1
+    assert base_parser.get_source('new_source')[1].id == 'new_source'
+
+
+def test_set_source_replace(base_parser: Parser):
+    """
+    Set_source should replace a source if it's already in the list
+    """
+    sources_list = base_parser._sources  # pylint: disable=W0212
+    sources_len = len(sources_list)
+    airbnb_new = Airbnb()
+    airbnb_new.source_code = 'new_airbnb'
+    base_parser.set_source(airbnb_new)
+
+    assert len(sources_list) == sources_len
+    assert base_parser.get_source('airbnb')[1].source_code == 'new_airbnb'

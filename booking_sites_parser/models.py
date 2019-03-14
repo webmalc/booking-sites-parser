@@ -1,9 +1,15 @@
-# -*- coding: utf-8 -*-
 """
 Package models
 """
+from abc import ABC, abstractmethod
 from decimal import Decimal
-from typing import List
+from typing import List, Optional
+
+
+class ParserException(Exception):
+    """
+    Base parser exception
+    """
 
 
 class Address():
@@ -11,7 +17,12 @@ class Address():
     Address class
     """
 
-    def __init__(self, address: str, region: str, country: str) -> None:
+    def __init__(
+            self,
+            country: str,
+            address: str = None,
+            region: str = None,
+    ) -> None:
         """
         Class constructor
 
@@ -21,11 +32,12 @@ class Address():
         self.region = region
         self.country = country
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return a full address string
         """
-        return '{}, {}, {}'.format(self.address, self.region, self.country)
+        parts = [x for x in [self.address, self.region, self.country] if x]
+        return ', '.join(parts)
 
 
 class Property():
@@ -37,10 +49,10 @@ class Property():
     title: str
     description: str
     address: Address
-    price: Decimal
-    images: List[str]
-    services: List[str]
-    cancellation_policy: str
+    price: Optional[Decimal]
+    images: List[str] = []
+    services: List[str] = []
+    cancellation_policy: Optional[str]
 
     def __init__(self, url: str):
         """
@@ -54,3 +66,60 @@ class Property():
     def id(self) -> str:
         """ Get property ID """
         return self.url
+
+
+class BaseSource(ABC):
+    """
+    Base class for sources classes (booking, airbnb, etc)
+    """
+
+    source_code: str = ''
+
+    @property
+    @abstractmethod
+    def id(self):
+        """
+        Source ID
+        """
+
+    @abstractmethod
+    def get_title(self) -> str:
+        """
+        Get property title
+        """
+
+    @abstractmethod
+    def get_description(self) -> str:
+        """
+        Get property description
+        """
+
+    @abstractmethod
+    def get_address(self) -> Address:
+        """
+        Get property description
+        """
+
+    @abstractmethod
+    def get_price(self) -> Optional[Decimal]:
+        """
+        Get property price
+        """
+
+    @abstractmethod
+    def get_images(self) -> List[str]:
+        """
+        Get property list
+        """
+
+    @abstractmethod
+    def get_services(self) -> List[str]:
+        """
+        Get property services
+        """
+
+    @abstractmethod
+    def get_cancellation_policy(self) -> str:
+        """
+        Get property services
+        """
