@@ -20,12 +20,12 @@ def test_parser_initialization(base_parser: Parser):
 
 def test_parser_method_results_count(
         base_parser: Parser,
-        additional_source: BaseSource,
+        source: BaseSource,
 ):
     """
     Parse method should return an iterable object with results
     """
-    base_parser._sources = [additional_source]  # pylint: disable=W0212
+    base_parser._sources = [source]  # pylint: disable=W0212
     urls = [
         'https://www.newsource.com/one',
         'https://www.newsource.com/two',
@@ -41,13 +41,13 @@ def test_parser_method_results_count(
     assert len(list(properties)) == should_return_count - 1
 
 
-def test_sort_sources(base_parser: Parser, additional_source: BaseSource):
+def test_sort_sources(base_parser: Parser, source: BaseSource):
     """
     Sort_sources_by_priority method should sort sources by their priority
     """
-    additional_source.priority = -1
+    source.priority = -1
     sources = base_parser._sources  # pylint: disable=W0212
-    sources.append(additional_source)
+    sources.append(source)
     assert sources[0].id == 'airbnb'
     base_parser.sort_sources_by_priority()
     assert sources[0].id == 'new_source'
@@ -76,13 +76,13 @@ def test_get_source_with_invalid_id(base_parser: Parser):
     assert 'id=invalid_source_id' in str(exception.value)
 
 
-def test_set_source_add(base_parser: Parser, additional_source: BaseSource):
+def test_set_source_add(base_parser: Parser, source: BaseSource):
     """
     Set_source should add a new source to the sources list
     """
     sources_list = base_parser._sources  # pylint: disable=W0212
     sources_len = len(sources_list)
-    base_parser.set_source(additional_source)
+    base_parser.set_source(source)
 
     assert len(sources_list) == sources_len + 1
     assert base_parser.get_source('new_source')[1].id == 'new_source'

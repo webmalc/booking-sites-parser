@@ -31,7 +31,7 @@ def address() -> Address:
 
 
 @pytest.fixture
-def additional_source() -> BaseSource:
+def source() -> BaseSource:
     """
     Returns new source class
     """
