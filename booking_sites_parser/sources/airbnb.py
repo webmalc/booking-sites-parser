@@ -5,7 +5,7 @@ Airbnb module
 from decimal import Decimal
 from typing import List, Optional
 
-from booking_sites_parser import Address, BaseSource
+from booking_sites_parser.models import Address, BaseSource
 
 
 class Airbnb(BaseSource):
@@ -14,6 +14,7 @@ class Airbnb(BaseSource):
     """
 
     id = 'airbnb'
+    domain = 'airbnb'
 
     def get_title(self) -> str:
         """

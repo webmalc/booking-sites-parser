@@ -41,5 +41,6 @@ def additional_source() -> BaseSource:
         New source class
         """
         id = 'new_source'
+        domain = 'newsource.com'
 
     return NewSource()

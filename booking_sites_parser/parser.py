@@ -3,13 +3,8 @@ Parser module
 """
 from typing import Iterable, Iterator, List, Tuple
 
-from .models import BaseSource, ParserException, Property
+from .models import BaseSource, Optional, ParserException, Property
 from .sources.airbnb import Airbnb
-
-
-"""
-Tuple with information about a property
-"""
 
 
 class Parser():
@@ -27,6 +22,12 @@ class Parser():
             self._sources = sources
         else:
             self._sources = [Airbnb()]
+
+    def sort_sources_by_priority(self) -> None:
+        """
+        Sort the sources by their priority
+        """
+        self._sources.sort(key=lambda x: x.priority)
 
     def get_source(self, source_id: str) -> Tuple[int, BaseSource]:
         """
@@ -53,6 +54,22 @@ class Parser():
         except ParserException:
             self._sources.append(source)
 
+    @staticmethod
+    def _try_source(source: BaseSource, url: str) -> Optional[Property]:
+        """
+        Try to get a property object from the source
+
+        :param url: URL to parse
+        :param source: source to try
+        """
+        result = None
+        try:
+            if source.check_url(url):
+                result = source.parse(url)
+        except ParserException:
+            pass
+        return result
+
     def parse(self, urls: Iterable[str]) -> Iterator[Property]:
         """
         Parse the provided urls list
@@ -60,5 +77,7 @@ class Parser():
         :param urls: an iterator object with urls to parse
         """
         for url in urls:
-            result = Property(url)
-            yield result
+            for source in self._sources:
+                result = self._try_source(source, url)
+                if result:
+                    yield result

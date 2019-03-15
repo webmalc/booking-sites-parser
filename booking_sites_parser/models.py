@@ -1,6 +1,7 @@
 """
 Package models
 """
+import re
 from abc import ABC, abstractmethod
 from decimal import Decimal
 from typing import List, Optional
@@ -46,6 +47,7 @@ class Property():
     """
 
     url: str
+    source_id: str
     title: str
     description: str
     address: Address
@@ -74,12 +76,22 @@ class BaseSource(ABC):
     """
 
     source_code: str = ''
+    priority: int = 0
+    url: str
+    url_regex_pattern: str = r'^https?:\/\/(www\.)?{domain}.*$'
 
     @property
     @abstractmethod
-    def id(self):
+    def id(self) -> str:
         """
         Source ID
+        """
+
+    @property
+    @abstractmethod
+    def domain(self) -> str:
+        """
+        Domain to check if URL is suitable for this source
         """
 
     @abstractmethod
@@ -123,3 +135,35 @@ class BaseSource(ABC):
         """
         Get property services
         """
+
+    def check_url(self, url: str = None) -> bool:
+        """
+        Check if the url is suitable for this source
+        """
+        if not url:
+            url = self.url
+        if not url:
+            raise AttributeError('URL has not been provided')
+
+        pattern = re.compile(self.url_regex_pattern.format(domain=self.domain))
+        return bool(pattern.match(url))
+
+    def parse(self, url: str) -> Property:
+        """
+        Parse an URL and return a Property object
+        :param url: an url to parse
+        """
+        self.url = url
+        if not self.check_url(url):
+            raise AttributeError('Invalid URL has been provided')
+        result = Property(url)
+        result.source_id = self.id
+        result.title = self.get_title()
+        result.description = self.get_description()
+        result.address = self.get_address()
+        result.price = self.get_price()
+        result.images = self.get_images()
+        result.services = self.get_services()
+        result.cancellation_policy = self.get_cancellation_policy()
+
+        return result

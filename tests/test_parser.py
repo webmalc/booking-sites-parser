@@ -18,20 +18,44 @@ def test_parser_initialization(base_parser: Parser):
     assert isinstance(base_parser._sources[0], Airbnb)  # pylint: disable=W0212
 
 
-def test_parser_method_results(base_parser: Parser):
+def test_parser_method_results_count(
+        base_parser: Parser,
+        additional_source: BaseSource,
+):
     """
     Parse method should return an iterable object with results
     """
-    properties = base_parser.parse(['one', 'two', 'three'])
+    base_parser._sources = [additional_source]  # pylint: disable=W0212
+    urls = [
+        'https://www.newsource.com/one',
+        'https://www.newsource.com/two',
+        'invalid_url',
+        'https://www.newsource.com/three',
+    ]
+    should_return_count = len(urls) - 1
+    properties = base_parser.parse(urls)
 
     assert isinstance(properties, Iterator)
     result = next(properties)
     assert isinstance(result, Property)
+    assert len(list(properties)) == should_return_count - 1
+
+
+def test_sort_sources(base_parser: Parser, additional_source: BaseSource):
+    """
+    Sort_sources_by_priority method should sort sources by their priority
+    """
+    additional_source.priority = -1
+    sources = base_parser._sources  # pylint: disable=W0212
+    sources.append(additional_source)
+    assert sources[0].id == 'airbnb'
+    base_parser.sort_sources_by_priority()
+    assert sources[0].id == 'new_source'
 
 
 def test_get_source(base_parser: Parser):
     """
-    Get_source should return a source by a source ID
+    Get_source method should return a source by a source ID
     """
     source_id, airbnb = base_parser.get_source('airbnb')
 
@@ -66,7 +90,7 @@ def test_set_source_add(base_parser: Parser, additional_source: BaseSource):
 
 def test_set_source_replace(base_parser: Parser):
     """
-    Set_source should replace a source if it's already in the list
+    Set_source method should replace a source if it's already in the list
     """
     sources_list = base_parser._sources  # pylint: disable=W0212
     sources_len = len(sources_list)
