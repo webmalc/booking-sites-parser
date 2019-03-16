@@ -6,6 +6,8 @@ from abc import ABC, abstractmethod
 from decimal import Decimal
 from typing import List, Optional
 
+from .http_client import HttpClient
+
 
 class ParserException(Exception):
     """
@@ -79,6 +81,7 @@ class BaseSource(ABC):
     priority: int = 0
     url: str
     url_regex_pattern: str = r'^https?:\/\/(www\.)?{domain}.*$'
+    http_client: HttpClient = HttpClient()
 
     @property
     @abstractmethod
