@@ -12,10 +12,18 @@ from booking_sites_parser.sources.airbnb import Airbnb
 
 def test_parser_initialization(base_parser: Parser):
     """
-    The parser should be able to create
+    The parser should be able to be created
     """
     assert isinstance(base_parser, Parser)
     assert isinstance(base_parser._sources[0], Airbnb)  # pylint: disable=W0212
+
+
+def test_parser_initialization_with_sources(source):
+    """
+    The parser should be able to be created with injected sources
+    """
+    parser = Parser(sources=[source])
+    assert parser._sources[0] == source  # pylint: disable=W0212
 
 
 def test_parser_method_results_count(
@@ -86,6 +94,22 @@ def test_set_source_add(base_parser: Parser, source: BaseSource):
 
     assert len(sources_list) == sources_len + 1
     assert base_parser.get_source('new_source')[1].id == 'new_source'
+
+
+def test_try_source_exception_suppression(base_parser: Parser,
+                                          source: BaseSource):
+    """
+    Try_source method should suppress ParserException exceptions
+    """
+
+    def raise_exception(url: str):
+        raise ParserException('test exception')
+
+    source.check_url = raise_exception
+    assert base_parser._try_source(  # pylint: disable=W0212
+        source,
+        'http://url.test',
+    ) is None
 
 
 def test_set_source_replace(base_parser: Parser):

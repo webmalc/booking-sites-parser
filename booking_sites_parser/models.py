@@ -79,7 +79,7 @@ class BaseSource(ABC):
 
     source_code: str = ''
     priority: int = 0
-    url: str
+    url: Optional[str] = None
     url_regex_pattern: str = r'^https?:\/\/(www\.)?{domain}.*$'
     http_client: HttpClient = HttpClient()
 
@@ -146,7 +146,7 @@ class BaseSource(ABC):
         if not url:
             url = self.url
         if not url:
-            raise AttributeError('URL has not been provided')
+            raise ParserException('URL has not been provided')
 
         pattern = re.compile(self.url_regex_pattern.format(domain=self.domain))
         return bool(pattern.match(url))
@@ -158,7 +158,7 @@ class BaseSource(ABC):
         """
         self.url = url
         if not self.check_url(url):
-            raise AttributeError('Invalid URL has been provided')
+            raise ParserException('Invalid URL has been provided')
         result = Property(url)
         result.source_id = self.id
         result.title = self.get_title()

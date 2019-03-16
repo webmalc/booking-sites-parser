@@ -56,7 +56,15 @@ def test_get(patch_http_client):
     """
     The client should be able to make GET request
     """
-    response = HttpResponse(200, '<title>Example Domain</title>', lambda: None)
+
+    def raise_exception():
+        raise ValueError('json exception')
+
+    response = HttpResponse(
+        200,
+        '<title>Example Domain</title>',
+        raise_exception,
+    )
     patch_http_client(lambda x: response)
     _valid_request()
 

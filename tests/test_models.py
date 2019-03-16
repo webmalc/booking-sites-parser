@@ -4,7 +4,9 @@ Test suite for the parser models
 from decimal import Decimal
 from unittest.mock import MagicMock
 
-from booking_sites_parser import Address, BaseSource, Property
+import pytest
+
+from booking_sites_parser import Address, BaseSource, ParserException, Property
 
 
 def test_property_id(base_property: Property):
@@ -41,6 +43,10 @@ def test_sources_check_url_method(source: BaseSource):
     assert source.check_url('http://www.booking.com')
     assert source.check_url('http://www.booking.ru')
     assert not source.check_url('http://www.newsource.com')
+
+    with pytest.raises(ParserException) as exception:
+        assert source.check_url() is None
+    assert 'URL has not been provided' in str(exception)
 
 
 def test_sources_parse_method(source: BaseSource):
@@ -90,3 +96,13 @@ def test_sources_parse_method(source: BaseSource):
 
     source.get_cancellation_policy.assert_called_once()
     assert result.cancellation_policy == cancellation_policy
+
+
+def test_sources_parse_method_invalid_url(source: BaseSource):
+    """
+    Parse method should call raise an exception if the invalid URL is provided
+    """
+
+    with pytest.raises(ParserException) as exception:
+        assert source.parse('https://invalid.url/') is None
+    assert 'Invalid URL has been provided' in str(exception)
