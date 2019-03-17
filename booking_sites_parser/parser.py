@@ -40,7 +40,7 @@ class Parser():
             if source.id == source_id:
                 return (i, source)
         raise ParserException(
-            'source with id={} has not been found'.format(source_id))
+            'Source with id={} has not been found.'.format(source_id))
 
     def set_source(self, source: BaseSource) -> None:
         """

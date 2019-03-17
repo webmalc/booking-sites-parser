@@ -265,6 +265,7 @@ good-names=i,
            j,
            k,
            id,
+           ok,
            ex,
            Run,
            _

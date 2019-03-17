@@ -21,9 +21,16 @@ class BaseHttpResponse(ABC):
 
     @property
     @abstractmethod
-    def text(self) -> Optional[str]:
+    def text(self) -> str:
         """
         Status code
+        """
+
+    @property
+    @abstractmethod
+    def ok(self) -> bool:
+        """
+        Is the request successful
         """
 
     @property
@@ -52,13 +59,15 @@ class HttpResponse(BaseHttpResponse):
     Class representing the HTTP response
     """
     status_code: Optional[int] = None
-    text: Optional[str] = None
+    text: str = ''
     json: Optional[dict] = None
+    ok: bool = False
 
     def __init__(
             self,
             status_code: int = None,
-            text: str = None,
+            text: str = '',
+            ok: bool = False,
             json: dict = None,
     ):
         """
@@ -68,6 +77,7 @@ class HttpResponse(BaseHttpResponse):
         self.status_code = status_code
         self.text = text
         self.json = json
+        self.ok = ok
 
 
 class HttpClient(BaseHttpClient):
@@ -87,9 +97,9 @@ class HttpClient(BaseHttpClient):
             response = self.client.get(url)
         except requests.exceptions.RequestException:
             return HttpResponse()
-        result = HttpResponse(response.status_code, response.text)
+        result = HttpResponse(response.status_code, response.text, response.ok)
         try:
             result.json = response.json()
-        except ValueError:
+        except (ValueError, TypeError):
             pass
         return result

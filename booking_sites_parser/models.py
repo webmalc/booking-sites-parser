@@ -139,17 +139,37 @@ class BaseSource(ABC):
         Get property services
         """
 
-    def check_url(self, url: str = None) -> bool:
+    def __get_url(self, url: str = None) -> str:
         """
-        Check if the url is suitable for this source
+        Get URL
         """
         if not url:
             url = self.url
         if not url:
-            raise ParserException('URL has not been provided')
+            raise ParserException('URL has not been provided.')
+        return url
 
+    def check_url(self, url: str = None) -> bool:
+        """
+        Check if the url is suitable for this source
+        """
+        url = self.__get_url(url)
         pattern = re.compile(self.url_regex_pattern.format(domain=self.domain))
         return bool(pattern.match(url))
+
+    def get_source(self, url: str = None) -> str:
+        """
+        Get HTML source from URL
+        :param url: source URL
+        """
+        self.source_code = ''
+        url = self.__get_url(url)
+        response = self.http_client.get(url)
+        if not response.ok:
+            raise ParserException('The HTTP request has failed.')
+        self.source_code = response.text
+
+        return self.source_code
 
     def parse(self, url: str) -> Property:
         """
@@ -158,7 +178,8 @@ class BaseSource(ABC):
         """
         self.url = url
         if not self.check_url(url):
-            raise ParserException('Invalid URL has been provided')
+            raise ParserException('Invalid URL has been provided.')
+        # self.get_source(url)
         result = Property(url)
         result.source_id = self.id
         result.title = self.get_title()

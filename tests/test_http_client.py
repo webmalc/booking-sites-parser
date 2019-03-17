@@ -17,6 +17,7 @@ def _valid_request():
     response = client.get('https://example.com/')
     assert isinstance(response, BaseHttpResponse)
     assert response.status_code == 200
+    assert response.ok
     assert '<title>Example Domain</title>' in response.text
     assert response.json is None
 
@@ -29,6 +30,7 @@ def _json_request():
     client = HttpClient()
     response = client.get('https://api.github.com/')
     assert response.status_code == 200
+    assert response.ok
     assert isinstance(response.json, dict)
 
 
@@ -40,7 +42,8 @@ def _invalid_request():
     client = HttpClient()
     response = client.get('https://invalid.domain/')
     assert response.status_code is None
-    assert response.text is None
+    assert not response.ok
+    assert not response.text
 
 
 def _invalid_request_404():
@@ -49,6 +52,7 @@ def _invalid_request_404():
     """
     client = HttpClient()
     response = client.get('http://google.com/404')
+    assert not response.ok
     assert response.status_code == 404
 
 
@@ -56,15 +60,7 @@ def test_get(patch_http_client):
     """
     The client should be able to make GET request
     """
-
-    def raise_exception():
-        raise ValueError('json exception')
-
-    response = HttpResponse(
-        200,
-        '<title>Example Domain</title>',
-        raise_exception,
-    )
+    response = HttpResponse(200, '<title>Example Domain</title>', True)
     patch_http_client(lambda x: response)
     _valid_request()
 
@@ -83,7 +79,7 @@ def test_get_invalid(patch_http_client):
     patch_http_client(invalid_response)
     _invalid_request()
 
-    patch_http_client(lambda x: HttpResponse(404, '', lambda: None))
+    patch_http_client(lambda x: HttpResponse(404, '', False, lambda: None))
     _invalid_request_404()
 
 
@@ -91,7 +87,7 @@ def test_get_json(patch_http_client):
     """
     The client should be able to parse a JSON response (real HTTP request)
     """
-    response = HttpResponse(200, '', lambda: {'test:': 'test_value'})
+    response = HttpResponse(200, '', True, lambda: {'test:': 'test_value'})
     patch_http_client(lambda x: response)
     _json_request()
 

@@ -5,8 +5,10 @@ from decimal import Decimal
 from unittest.mock import MagicMock
 
 import pytest
+import requests
 
 from booking_sites_parser import Address, BaseSource, ParserException, Property
+from booking_sites_parser.http_client import HttpResponse
 
 
 def test_property_id(base_property: Property):
@@ -47,6 +49,39 @@ def test_sources_check_url_method(source: BaseSource):
     with pytest.raises(ParserException) as exception:
         assert source.check_url() is None
     assert 'URL has not been provided' in str(exception)
+
+
+def test_sources_get_source_method(source: BaseSource, patch_http_client):
+    """
+    Get_source method should save HTML source to the source_code property
+    and return a filled property object
+    """
+    html = '<title>Test HTML</title>'
+    patch_http_client(lambda x: HttpResponse(200, html, True))
+    source.url = 'http://newsource.com/12'
+    source.get_source()
+    assert source.source_code == html
+
+
+def test_sources_get_source_method_exception(source: BaseSource,
+                                             patch_http_client):
+    """
+    Get_source method should raise exception if a request has failed
+    and return a filled property object
+    """
+
+    def invalid_response(url: str):
+        """
+        Raises a requests exception
+        """
+        raise requests.exceptions.RequestException
+
+    source.source_code = 'old_source'
+    patch_http_client(invalid_response)
+    with pytest.raises(ParserException) as exception:
+        source.get_source('http://newsource.com/12')
+        assert source.source_code == ''
+    assert 'The HTTP request has failed.' in str(exception)
 
 
 def test_sources_parse_method(source: BaseSource):
