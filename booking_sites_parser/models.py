@@ -179,7 +179,7 @@ class BaseSource(ABC):
         self.url = url
         if not self.check_url(url):
             raise ParserException('Invalid URL has been provided.')
-        # self.get_source(url)
+        self.get_source(url)
         result = Property(url)
         result.source_id = self.id
         result.title = self.get_title()

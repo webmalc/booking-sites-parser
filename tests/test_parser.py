@@ -3,10 +3,12 @@ Test suite for the parser
 """
 
 from collections.abc import Iterator
+from typing import Callable
 
 import pytest
 
 from booking_sites_parser import BaseSource, Parser, ParserException, Property
+from booking_sites_parser.http_client import HttpResponse
 from booking_sites_parser.sources.airbnb import Airbnb
 
 
@@ -26,13 +28,13 @@ def test_parser_initialization_with_sources(source):
     assert parser._sources[0] == source  # pylint: disable=W0212
 
 
-def test_parser_method_results_count(
-        base_parser: Parser,
-        source: BaseSource,
-):
+def test_parser_method_results_count(base_parser: Parser, source: BaseSource,
+                                     patch_http_client: Callable):
     """
     Parse method should return an iterable object with results
     """
+    html = '<title>Test HTML</title>'
+    patch_http_client(lambda x: HttpResponse(200, html, True))
     base_parser._sources = [source]  # pylint: disable=W0212
     urls = [
         'https://www.newsource.com/one',

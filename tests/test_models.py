@@ -84,11 +84,13 @@ def test_sources_get_source_method_exception(source: BaseSource,
     assert 'The HTTP request has failed.' in str(exception)
 
 
-def test_sources_parse_method(source: BaseSource):
+def test_sources_parse_method(source: BaseSource, patch_http_client):
     """
     Parse method should call relevant methods of the source object
     and return a filled property object
     """
+    html = '<title>Test HTML</title>'
+    patch_http_client(lambda x: HttpResponse(200, html, True))
     title = 'test_title'
     description = 'test_description'
     address = Address('country', 'region', 'street')
@@ -108,6 +110,7 @@ def test_sources_parse_method(source: BaseSource):
 
     result = source.parse('https://newsource.com/?test=true')
 
+    assert source.source_code == html
     assert isinstance(result, Property)
     assert result.source_id == source.id
 
