@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 import requests
+from bs4 import BeautifulSoup
 
 from booking_sites_parser import Address, BaseSource, ParserException, Property
 from booking_sites_parser.http_client import HttpResponse
@@ -49,6 +50,22 @@ def test_sources_check_url_method(source: BaseSource):
     with pytest.raises(ParserException) as exception:
         assert source.check_url() is None
     assert 'URL has not been provided' in str(exception)
+
+
+def test_sources_get_parser_method(source: BaseSource, patch_http_client):
+    """
+    Get_parser method should create a parser object
+    and return it
+    """
+    title = 'Test HTML'
+    html = '<title>{}</title>'.format(title)
+    patch_http_client(lambda x: HttpResponse(200, html, True))
+    source.url = 'http://newsource.com/12'
+    parser = source.get_parser()
+
+    assert isinstance(parser, BeautifulSoup)
+    assert parser == source.parser
+    assert parser.title.text == title
 
 
 def test_sources_get_source_method(source: BaseSource, patch_http_client):

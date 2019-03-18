@@ -5,7 +5,7 @@ Airbnb module
 from decimal import Decimal
 from typing import List, Optional
 
-from booking_sites_parser.models import Address, BaseSource
+from booking_sites_parser.models import Address, BaseSource, ParserException
 
 
 class Airbnb(BaseSource):
@@ -13,13 +13,19 @@ class Airbnb(BaseSource):
     Parser for airbnb.com website
     """
 
-    id = 'airbnb'
-    domain = 'airbnb'
+    id: str = 'airbnb'
+    domain: str = 'airbnb'
+    title_selectors: List[str] = ['span._18hrqvin', 'span._1xzp5ma3']
 
     def get_title(self) -> str:
         """
         Get property title
         """
+        for selector in self.title_selectors:
+            element = self.parser.select_one(selector)
+            if element:
+                return element.text
+        raise ParserException('Title element not found.')
 
     def get_description(self) -> str:
         """

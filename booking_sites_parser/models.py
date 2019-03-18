@@ -6,6 +6,8 @@ from abc import ABC, abstractmethod
 from decimal import Decimal
 from typing import List, Optional
 
+from bs4 import BeautifulSoup
+
 from .http_client import HttpClient
 
 
@@ -78,6 +80,7 @@ class BaseSource(ABC):
     """
 
     source_code: str = ''
+    parser: BeautifulSoup
     priority: int = 0
     url: Optional[str] = None
     url_regex_pattern: str = r'^https?:\/\/(www\.)?{domain}.*$'
@@ -171,6 +174,17 @@ class BaseSource(ABC):
 
         return self.source_code
 
+    def get_parser(self) -> BeautifulSoup:
+        """
+        Get a parser for the source code
+        """
+        self.parser = None
+        if not self.source_code:
+            self.get_source()
+        self.parser = BeautifulSoup(self.source_code, 'html.parser')
+
+        return self.parser
+
     def parse(self, url: str) -> Property:
         """
         Parse an URL and return a Property object
@@ -180,6 +194,7 @@ class BaseSource(ABC):
         if not self.check_url(url):
             raise ParserException('Invalid URL has been provided.')
         self.get_source(url)
+        self.get_parser()
         result = Property(url)
         result.source_id = self.id
         result.title = self.get_title()
