@@ -1,5 +1,5 @@
 """
-Airbnb module
+AirbnbPlus module
 """
 
 from decimal import Decimal
@@ -8,15 +8,15 @@ from typing import List, Optional
 from booking_sites_parser.models import Address, BaseSource
 
 
-class Airbnb(BaseSource):
+class AirbnbPlus(BaseSource):
     """
-    Parser for airbnb.com website
+    Parser for airbnb.com website (plus properties)
     """
 
     id: str = 'airbnb'
-    domain: str = r'airbnb((?!plus\/).)*'
+    domain: str = r'airbnb.*plus\/.*'
 
-    title_css_selector: str = 'span._18hrqvin'
+    title_css_selector: str = 'span._1xzp5ma3'
 
     def get_description(self) -> str:
         """

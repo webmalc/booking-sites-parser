@@ -42,12 +42,13 @@ def test_sources_check_url_method(source: BaseSource):
     assert source.check_url('http://www.newsource.com')
     assert not source.check_url('https://google.com/')
 
-    source.domain = 'booking'
+    source.domain = 'booking.*'
     assert source.check_url('http://www.booking.com')
     assert source.check_url('http://www.booking.ru')
     assert not source.check_url('http://www.newsource.com')
 
     with pytest.raises(ParserException) as exception:
+        source.url = None
         assert source.check_url() is None
     assert 'URL has not been provided' in str(exception)
 
@@ -60,7 +61,6 @@ def test_sources_get_parser_method(source: BaseSource, patch_http_client):
     title = 'Test HTML'
     html = '<title>{}</title>'.format(title)
     patch_http_client(lambda x: HttpResponse(200, html, True))
-    source.url = 'http://newsource.com/12'
     parser = source.get_parser()
 
     assert isinstance(parser, BeautifulSoup)
@@ -161,3 +161,15 @@ def test_sources_parse_method_invalid_url(source: BaseSource):
     with pytest.raises(ParserException) as exception:
         assert source.parse('https://invalid.url/') is None
     assert 'Invalid URL has been provided' in str(exception)
+
+
+def test_sources_get_title(source: BaseSource, patch_http_client):
+    """
+    Get_title should return a property title
+    """
+    title = 'Test title'
+    html = '<span class="title">{}</span>'.format(title)
+    patch_http_client(lambda x: HttpResponse(200, html, True))
+    source.get_parser()
+
+    assert source.get_title() == title

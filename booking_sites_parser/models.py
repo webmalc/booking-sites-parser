@@ -83,8 +83,11 @@ class BaseSource(ABC):
     parser: BeautifulSoup
     priority: int = 0
     url: Optional[str] = None
-    url_regex_pattern: str = r'^https?:\/\/(www\.)?{domain}.*$'
+    url_regex_pattern: str = r'^https?:\/\/(www\.)?{domain}$'
     http_client: HttpClient = HttpClient()
+
+    # CSS selectors
+    title_css_selector: str
 
     @property
     @abstractmethod
@@ -97,14 +100,16 @@ class BaseSource(ABC):
     @abstractmethod
     def domain(self) -> str:
         """
-        Domain to check if URL is suitable for this source
+        Domain regex to check if URL is suitable for this source
         """
 
-    @abstractmethod
     def get_title(self) -> str:
         """
         Get property title
         """
+        element = self.parser.select_one(self.title_css_selector)
+
+        return getattr(element, 'text', '')
 
     @abstractmethod
     def get_description(self) -> str:
