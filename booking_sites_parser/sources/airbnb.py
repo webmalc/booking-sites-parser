@@ -36,6 +36,8 @@ class Airbnb(BaseSource, AirbnbMixin):
         """
         Get property maximum occupancy in guests
         """
+        # ipdb> 'person_capacity' in  \
+        # airbnb._js_data['reduxData']['homePDP']['listingInfo']['listing']
 
     def get_price(self) -> Optional[Decimal]:
         """

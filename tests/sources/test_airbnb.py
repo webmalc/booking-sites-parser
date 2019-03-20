@@ -29,6 +29,28 @@ def test_check_url():
         'https://www.airbnb.co.uk/rooms/plus/4950937?guests=1&adults=1')
 
 
+def test_get_title_description():
+    """
+    Get_description should return a property description
+    """
+    airbnb = Airbnb()
+    result = 'test_description'
+    airbnb._js_data = {  # pylint: disable=W0212
+        'reduxData': {
+            'homePDP': {
+                'listingInfo': {
+                    'listing': {
+                        'sectioned_description': {
+                            'description': result
+                        }
+                    }
+                }
+            }
+        }
+    }
+    assert airbnb.get_description() == result
+
+
 @pytest.mark.http
 def test_get_title_real_http():
     """
@@ -50,4 +72,5 @@ def test_get_description_real_http():
     airbnb.url = PROPERTY_URL
     airbnb.get_parser()
     description = airbnb.get_description()
+
     assert PROPERTY_DESCRIPTION in description
