@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 import requests
+from fake_useragent import UserAgent
 
 
 class BaseHttpResponse(ABC):
@@ -86,15 +87,18 @@ class HttpClient(BaseHttpClient):
     """
 
     client = requests
+    headers = {
+        'user-agent': UserAgent().chrome,
+        'cache-control': 'private, max-age=0, no-cache',
+    }
 
     def get(self, url: str) -> HttpResponse:
         """
         Make GET request
         :param url: a requested URL
         """
-
         try:
-            response = self.client.get(url)
+            response = self.client.get(url, headers=self.headers)
         except requests.exceptions.RequestException:
             return HttpResponse()
         result = HttpResponse(response.status_code, response.text, response.ok)

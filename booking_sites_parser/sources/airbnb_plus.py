@@ -6,9 +6,10 @@ from decimal import Decimal
 from typing import List, Optional
 
 from booking_sites_parser.models import Address, BaseSource
+from booking_sites_parser.sources.airbnb_mixin import AirbnbMixin
 
 
-class AirbnbPlus(BaseSource):
+class AirbnbPlus(BaseSource, AirbnbMixin):
     """
     Parser for airbnb.com website (plus properties)
     """
@@ -17,11 +18,7 @@ class AirbnbPlus(BaseSource):
     domain: str = r'airbnb.*plus\/.*'
 
     title_css_selector: str = 'span._1xzp5ma3'
-
-    def get_description(self) -> str:
-        """
-        Get property description
-        """
+    description_css_selector: str = 'div._9qwh472 span._1ezjrwzo'
 
     def get_address(self) -> Address:
         """

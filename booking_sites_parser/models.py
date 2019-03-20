@@ -88,6 +88,7 @@ class BaseSource(ABC):
 
     # CSS selectors
     title_css_selector: str
+    description_css_selector: str
 
     @property
     @abstractmethod
@@ -103,18 +104,30 @@ class BaseSource(ABC):
         Domain regex to check if URL is suitable for this source
         """
 
+    def _get_html_text_by_selector(self, selector: str) -> str:
+        """
+        Get HTML element text by the selector
+        """
+        element = self.parser.select_one(selector)
+
+        return getattr(element, 'text', '')
+
     def get_title(self) -> str:
         """
         Get property title
         """
-        element = self.parser.select_one(self.title_css_selector)
+        return self._get_html_text_by_selector(self.title_css_selector)
 
-        return getattr(element, 'text', '')
-
-    @abstractmethod
     def get_description(self) -> str:
         """
         Get property description
+        """
+        return self._get_html_text_by_selector(self.description_css_selector)
+
+    @abstractmethod
+    def get_max_guests(self) -> int:
+        """
+        Get property maximum occupancy in guests
         """
 
     @abstractmethod

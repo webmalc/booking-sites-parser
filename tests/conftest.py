@@ -17,7 +17,7 @@ def patch_http_client(monkeypatch) -> Callable:
     client_path: str = 'booking_sites_parser.http_client.HttpClient.client.get'
 
     def _make_patch(response: Callable):
-        monkeypatch.setattr(client_path, response)
+        monkeypatch.setattr(client_path, lambda x, headers: response(x))
 
     return _make_patch
 
@@ -60,11 +60,7 @@ def source() -> BaseSource:
         domain = r'newsource\.com.*'
 
         title_css_selector = 'span.title'
-
-        def get_description(self) -> str:
-            """
-            Get property description
-            """
+        description_css_selector: str = 'div.description'
 
         def get_address(self) -> Address:
             """

@@ -173,3 +173,15 @@ def test_sources_get_title(source: BaseSource, patch_http_client):
     source.get_parser()
 
     assert source.get_title() == title
+
+
+def test_sources_get_descriptions(source: BaseSource, patch_http_client):
+    """
+    Get_title should return a property description
+    """
+    description = 'Test description'
+    html = '<div class="description">{}</div>'.format(description)
+    patch_http_client(lambda x: HttpResponse(200, html, True))
+    source.get_parser()
+
+    assert source.get_description() == description
