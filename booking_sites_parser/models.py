@@ -125,7 +125,7 @@ class BaseSource(ABC):
         return self._get_html_text_by_selector(self.description_css_selector)
 
     @abstractmethod
-    def get_max_guests(self) -> int:
+    def get_max_guests(self) -> Optional[int]:
         """
         Get property maximum occupancy in guests
         """

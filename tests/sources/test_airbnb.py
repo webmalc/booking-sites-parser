@@ -9,6 +9,7 @@ from booking_sites_parser.sources.airbnb import Airbnb
 PROPERTY_URL: str = 'https://www.airbnb.com/rooms/2075509'
 PROPERTY_TITLE: str = 'Stunning home in central Tokyo'
 PROPERTY_DESCRIPTION: str = 'We can also offer a concierge service to'
+PROPERTY_MAX_GUESTS: int = 9
 
 
 def test_check_url():
@@ -29,26 +30,13 @@ def test_check_url():
         'https://www.airbnb.co.uk/rooms/plus/4950937?guests=1&adults=1')
 
 
-def test_get_title_description():
+def test_get_title_description(airbnb_js_data):
     """
     Get_description should return a property description
     """
     airbnb = Airbnb()
-    result = 'test_description'
-    airbnb._js_data = {  # pylint: disable=W0212
-        'reduxData': {
-            'homePDP': {
-                'listingInfo': {
-                    'listing': {
-                        'sectioned_description': {
-                            'description': result
-                        }
-                    }
-                }
-            }
-        }
-    }
-    assert airbnb.get_description() == result
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    assert airbnb.get_description() == 'test_description'
 
 
 @pytest.mark.http
@@ -61,6 +49,19 @@ def test_get_title_real_http():
     airbnb.get_parser()
     title = airbnb.get_title()
     assert PROPERTY_TITLE in title
+
+
+@pytest.mark.http
+def test_get_max_guests_real_http():
+    """
+    Get_max_guests should return
+    a property max guests value (real HTTP request)
+    """
+    airbnb = Airbnb()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    max_guests = airbnb.get_max_guests()
+    assert max_guests == PROPERTY_MAX_GUESTS
 
 
 @pytest.mark.http

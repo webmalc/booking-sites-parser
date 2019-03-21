@@ -4,26 +4,12 @@ Test suite for the airbnb mixin
 from booking_sites_parser.sources.airbnb import Airbnb
 
 
-def test_get_js_listing_node():
+def test_get_js_listing_node(airbnb_js_data):
     """
     Get_js_listing should return the js data node by a path
     """
     airbnb = Airbnb()
-    airbnb._js_data = {  # pylint: disable=W0212
-        'reduxData': {
-            'homePDP': {
-                'listingInfo': {
-                    'listing': {
-                        'one': {
-                            'two': {
-                                'three': 'result'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
     assert airbnb.get_js_listing_node('one', 'two', 'three') == 'result'
     assert airbnb.get_js_listing_node('one', 'two', 'invalid') is None
     assert airbnb.get_js_listing_node('one', 'two', 'three', 'four') is None
@@ -97,3 +83,12 @@ def test_get_js_data_fallback():
     data = airbnb.get_js_data()
     assert data == airbnb._js_data  # pylint: disable=W0212
     assert data == {'test': 12, '15': 11}
+
+
+def test_get_max_guests(airbnb_js_data):
+    """
+    Get_max_guests should return a property max guests value
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    assert airbnb.get_max_guests() == 3

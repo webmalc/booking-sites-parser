@@ -10,6 +10,32 @@ from booking_sites_parser import Address, BaseSource, Parser, Property
 
 
 @pytest.fixture
+def airbnb_js_data() -> dict:
+    """
+    Returns a fake JS data for the Airbnb classes
+    """
+    return {
+        'reduxData': {
+            'homePDP': {
+                'listingInfo': {
+                    'listing': {
+                        'person_capacity': 3,
+                        'one': {
+                            'two': {
+                                'three': 'result'
+                            }
+                        },
+                        'sectioned_description': {
+                            'description': 'test_description'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+@pytest.fixture
 def patch_http_client(monkeypatch) -> Callable:
     """
     Patch HTTP client
@@ -67,7 +93,7 @@ def source() -> BaseSource:
             Get property description
             """
 
-        def get_max_guests(self) -> int:
+        def get_max_guests(self) -> Optional[int]:
             """
             Get property maximum occupancy in guests
             """

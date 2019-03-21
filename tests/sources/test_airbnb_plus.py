@@ -9,6 +9,7 @@ from booking_sites_parser.sources.airbnb_plus import AirbnbPlus
 PROPERTY_URL: str = 'https://www.airbnb.co.uk/rooms/plus/4950937'
 PROPERTY_TITLE: str = 'Peaceful Treehouse with Ocean View'
 PROPERTY_DESCRIPTION: str = 'Rest well, then wake up to explore'
+PROPERTY_MAX_GUESTS: int = 6
 
 
 def test_check_url():
@@ -33,13 +34,26 @@ def test_check_url():
 @pytest.mark.http
 def test_get_title_real_http():
     """
-    Get_url should return a property title (real HTTP request)
+    Get_title should return a property title (real HTTP request)
     """
     airbnb = AirbnbPlus()
     airbnb.url = PROPERTY_URL
     airbnb.get_parser()
     title = airbnb.get_title()
     assert PROPERTY_TITLE in title
+
+
+@pytest.mark.http
+def test_get_max_guests_real_http():
+    """
+    Get_max_guests should return
+    a property max guests value (real HTTP request)
+    """
+    airbnb = AirbnbPlus()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    max_guests = airbnb.get_max_guests()
+    assert max_guests == PROPERTY_MAX_GUESTS
 
 
 @pytest.mark.http

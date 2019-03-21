@@ -9,7 +9,7 @@ from booking_sites_parser.models import Address, BaseSource
 from booking_sites_parser.sources.airbnb_mixin import AirbnbMixin
 
 
-class Airbnb(BaseSource, AirbnbMixin):
+class Airbnb(AirbnbMixin, BaseSource):
     """
     Parser for airbnb.com website
     """
@@ -31,13 +31,6 @@ class Airbnb(BaseSource, AirbnbMixin):
         """
         Get property description
         """
-
-    def get_max_guests(self) -> int:
-        """
-        Get property maximum occupancy in guests
-        """
-        # ipdb> 'person_capacity' in  \
-        # airbnb._js_data['reduxData']['homePDP']['listingInfo']['listing']
 
     def get_price(self) -> Optional[Decimal]:
         """

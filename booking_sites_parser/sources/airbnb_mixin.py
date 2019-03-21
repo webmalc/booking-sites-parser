@@ -2,7 +2,7 @@
 Airbnb module
 """
 import json
-from typing import Optional
+from typing import Any, List, Optional
 
 from bs4 import BeautifulSoup
 
@@ -16,9 +16,19 @@ class AirbnbMixin():
     _js_data: Optional[dict] = None
     script_selector: str = 'script[data-state=true]'
     script_selector_fallback: str = 'script[data-hypernova-key=spaspabundlejs]'
-    listing_path: list = ['reduxData', 'homePDP', 'listingInfo', 'listing']
+    listing_path: List[str] = [
+        'reduxData', 'homePDP', 'listingInfo', 'listing'
+    ]
 
-    def get_js_listing_node(self, *args) -> Optional[dict]:
+    max_guests_js_selector: List[str] = ['person_capacity']
+
+    def get_max_guests(self) -> Optional[int]:
+        """
+        Get property maximum occupancy in guests
+        """
+        return self.get_js_listing_node(*self.max_guests_js_selector)
+
+    def get_js_listing_node(self, *args) -> Optional[Any]:
         """
         Get the listing information from the js data
         """

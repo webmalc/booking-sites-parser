@@ -9,7 +9,7 @@ from booking_sites_parser.models import Address, BaseSource
 from booking_sites_parser.sources.airbnb_mixin import AirbnbMixin
 
 
-class AirbnbPlus(BaseSource, AirbnbMixin):
+class AirbnbPlus(AirbnbMixin, BaseSource):
     """
     Parser for airbnb.com website (plus properties)
     """
@@ -23,11 +23,6 @@ class AirbnbPlus(BaseSource, AirbnbMixin):
     def get_address(self) -> Address:
         """
         Get property description
-        """
-
-    def get_max_guests(self) -> int:
-        """
-        Get property maximum occupancy in guests
         """
 
     def get_price(self) -> Optional[Decimal]:
