@@ -2,7 +2,7 @@
 Airbnb module
 """
 import json
-from typing import Any, List, Optional
+from typing import Any, Iterable, List, Optional
 
 from bs4 import BeautifulSoup
 
@@ -21,12 +21,26 @@ class AirbnbMixin():
     ]
 
     max_guests_js_selector: List[str] = ['person_capacity']
+    photos_js_selector: List[str] = ['photos']
 
     def get_max_guests(self) -> Optional[int]:
         """
         Get property maximum occupancy in guests
         """
         return self.get_js_listing_node(*self.max_guests_js_selector)
+
+    def get_images(self) -> List[str]:
+        """
+        Get property images
+        """
+        photos = self.get_js_listing_node(*self.photos_js_selector)
+
+        if not photos or not isinstance(photos, Iterable):
+            return []
+        photos = sorted(photos, key=lambda x: x.get('sort_order', 999))
+        return [
+            x.get('xx_large', x.get('x_large', x.get('large'))) for x in photos
+        ]
 
     def get_js_listing_node(self, *args) -> Optional[Any]:
         """

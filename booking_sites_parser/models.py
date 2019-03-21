@@ -133,7 +133,7 @@ class BaseSource(ABC):
     @abstractmethod
     def get_address(self) -> Address:
         """
-        Get property description
+        Get property address
         """
 
     @abstractmethod
@@ -145,7 +145,7 @@ class BaseSource(ABC):
     @abstractmethod
     def get_images(self) -> List[str]:
         """
-        Get property list
+        Get property images
         """
 
     @abstractmethod
@@ -157,7 +157,7 @@ class BaseSource(ABC):
     @abstractmethod
     def get_cancellation_policy(self) -> str:
         """
-        Get property services
+        Get property cancellation policy
         """
 
     def __get_url(self, url: str = None) -> str:

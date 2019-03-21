@@ -29,17 +29,12 @@ class Airbnb(AirbnbMixin, BaseSource):
 
     def get_address(self) -> Address:
         """
-        Get property description
+        Get property address
         """
 
     def get_price(self) -> Optional[Decimal]:
         """
         Get property price
-        """
-
-    def get_images(self) -> List[str]:
-        """
-        Get property list
         """
 
     def get_services(self) -> List[str]:
@@ -49,5 +44,5 @@ class Airbnb(AirbnbMixin, BaseSource):
 
     def get_cancellation_policy(self) -> str:
         """
-        Get property services
+        Get property cancellation policy
         """

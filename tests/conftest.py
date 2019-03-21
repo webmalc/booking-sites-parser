@@ -19,7 +19,21 @@ def airbnb_js_data() -> dict:
             'homePDP': {
                 'listingInfo': {
                     'listing': {
-                        'person_capacity': 3,
+                        'photos': [
+                            {
+                                'sort_order': 2,
+                                'large': 'image_2'
+                            },
+                            {
+                                'xx_large': 'image_3'
+                            },
+                            {
+                                'sort_order': 1,
+                                'x_large': 'image_1'
+                            },
+                        ],
+                        'person_capacity':
+                        3,
                         'one': {
                             'two': {
                                 'three': 'result'

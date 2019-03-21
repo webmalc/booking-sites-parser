@@ -92,3 +92,21 @@ def test_get_max_guests(airbnb_js_data):
     airbnb = Airbnb()
     airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
     assert airbnb.get_max_guests() == 3
+
+
+def test_get_images(airbnb_js_data):
+    """
+    Get_images should return a property images
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    assert airbnb.get_images() == ['image_1', 'image_2', 'image_3']
+
+
+def test_get_images_not_found():
+    """
+    Get_images should return an empty list if images are not found
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = {'test': 'test'}  # pylint: disable=W0212
+    assert airbnb.get_images() == []

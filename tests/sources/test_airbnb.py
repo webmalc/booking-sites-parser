@@ -10,6 +10,7 @@ PROPERTY_URL: str = 'https://www.airbnb.com/rooms/2075509'
 PROPERTY_TITLE: str = 'Stunning home in central Tokyo'
 PROPERTY_DESCRIPTION: str = 'We can also offer a concierge service to'
 PROPERTY_MAX_GUESTS: int = 9
+PROPERTY_IMAGE = '45604883/54451b1c_original.jpg?aki_policy=xx_large'
 
 
 def test_check_url():
@@ -73,5 +74,17 @@ def test_get_description_real_http():
     airbnb.url = PROPERTY_URL
     airbnb.get_parser()
     description = airbnb.get_description()
-
     assert PROPERTY_DESCRIPTION in description
+
+
+@pytest.mark.http
+def test_get_images_real_http():
+    """
+    Get_description should return a list of
+    property photos (real HTTP request)
+    """
+    airbnb = Airbnb()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    photos = airbnb.get_images()
+    assert PROPERTY_IMAGE in photos[0]
