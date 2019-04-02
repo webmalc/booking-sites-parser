@@ -37,6 +37,23 @@ class Address():
         self.region = region
         self.country = country
 
+    @staticmethod
+    def create_from_string(address_str: str, delimiter: str = ','):
+        """
+        Create an address object from an address string
+        """
+        address = None
+        if not address_str or not isinstance(address_str, str):
+            return None
+        chucks = [x.strip() for x in address_str.split(delimiter)]
+
+        address = Address(chucks.pop())
+        if len(chucks) > 1:
+            address.region = chucks.pop()
+        if chucks:
+            address.address = ', '.join(chucks)
+        return address
+
     def __str__(self) -> str:
         """
         Return a full address string
@@ -54,7 +71,7 @@ class Property():
     source_id: str
     title: str
     description: str
-    address: Address
+    address: Optional[Address]
     price: Optional[Decimal]
     images: List[str] = []
     services: List[str] = []
@@ -131,7 +148,7 @@ class BaseSource(ABC):
         """
 
     @abstractmethod
-    def get_address(self) -> Address:
+    def get_address(self) -> Optional[Address]:
         """
         Get property address
         """

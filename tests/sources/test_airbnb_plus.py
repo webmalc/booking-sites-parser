@@ -4,11 +4,13 @@ Test suite for the airbnb source
 
 import pytest
 
+from booking_sites_parser.models import Address
 from booking_sites_parser.sources.airbnb_plus import AirbnbPlus
 
 PROPERTY_URL: str = 'https://www.airbnb.co.uk/rooms/plus/4950937'
 PROPERTY_TITLE: str = 'Peaceful Treehouse with Ocean View'
 PROPERTY_DESCRIPTION: str = 'Rest well, then wake up to explore'
+PROPERTY_ADDRESS: str = 'Aptos, California, United States'
 PROPERTY_MAX_GUESTS: int = 6
 PROPERTY_IMAGE = 'pictures/c10fc509-e309-4aad-b1af-7dd7c3ad880c.jpg'
 
@@ -67,6 +69,19 @@ def test_get_description_real_http():
     airbnb.get_parser()
     description = airbnb.get_description()
     assert PROPERTY_DESCRIPTION in description
+
+
+@pytest.mark.http
+def test_get_address_real_http():
+    """
+    Get_address should return a property address (real HTTP request)
+    """
+    airbnb = AirbnbPlus()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    address = airbnb.get_address()
+    assert isinstance(address, Address)
+    assert PROPERTY_ADDRESS in str(address)
 
 
 @pytest.mark.http

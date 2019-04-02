@@ -19,9 +19,9 @@ def test_property_id(base_property: Property):
     assert base_property.id == 'https://booking.com'
 
 
-def test_propery_address(base_property: Property, address: Address):
+def test_propery_address_to_string(base_property: Property, address: Address):
     """
-    Property address should be able to convert to string
+    Property address should be able to convert to a string
     """
     base_property.address = address
     assert str(base_property.address) == 'street, region, country'
@@ -31,6 +31,31 @@ def test_propery_address(base_property: Property, address: Address):
 
     base_property.address.region = None
     assert str(base_property.address) == 'country'
+
+
+def test_propery_address_create_from_string():
+    """
+    Property address should be able to create from a string
+    """
+    address_full = Address.create_from_string(
+        'City, test street, Test region, Country')
+    address_short = Address.create_from_string('City, Country')
+    address_country = Address.create_from_string('Country')
+    address_empty = Address.create_from_string('')
+
+    assert address_full.country == 'Country'
+    assert address_full.region == 'Test region'
+    assert address_full.address == 'City, test street'
+
+    assert address_short.country == 'Country'
+    assert address_short.region is None
+    assert address_short.address == 'City'
+
+    assert address_country.country == 'Country'
+    assert address_country.region is None
+    assert address_country.address is None
+
+    assert address_empty is None
 
 
 def test_sources_check_url_method(source: BaseSource):

@@ -34,6 +34,8 @@ def airbnb_js_data() -> dict:
                         ],
                         'person_capacity':
                         3,
+                        'location_title':
+                        'City, Region, Country',
                         'one': {
                             'two': {
                                 'three': 'result'
@@ -102,9 +104,9 @@ def source() -> BaseSource:
         title_css_selector = 'span.title'
         description_css_selector: str = 'div.description'
 
-        def get_address(self) -> Address:
+        def get_address(self) -> Optional[Address]:
             """
-            Get property description
+            Get property address
             """
 
         def get_max_guests(self) -> Optional[int]:
@@ -119,7 +121,7 @@ def source() -> BaseSource:
 
         def get_images(self) -> List[str]:
             """
-            Get property list
+            Get property images
             """
 
         def get_services(self) -> List[str]:
@@ -129,7 +131,7 @@ def source() -> BaseSource:
 
         def get_cancellation_policy(self) -> str:
             """
-            Get property services
+            Get property cancellation policy
             """
 
     result = NewSource()

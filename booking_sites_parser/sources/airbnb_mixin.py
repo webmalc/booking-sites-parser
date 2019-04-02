@@ -6,6 +6,8 @@ from typing import Any, Iterable, List, Optional
 
 from bs4 import BeautifulSoup
 
+from booking_sites_parser.models import Address
+
 
 class AirbnbMixin():
     """
@@ -22,6 +24,20 @@ class AirbnbMixin():
 
     max_guests_js_selector: List[str] = ['person_capacity']
     photos_js_selector: List[str] = ['photos']
+    address_js_selectors: List[List[str]] = [
+        ['p3_summary_address'],
+        ['location_title'],
+    ]
+
+    def get_address(self) -> Optional[Address]:
+        """
+        Get property address
+        """
+        result = None
+        for path in self.address_js_selectors:
+            address = self.get_js_listing_node(*path)
+            result = Address.create_from_string(str(address))
+        return result
 
     def get_max_guests(self) -> Optional[int]:
         """
