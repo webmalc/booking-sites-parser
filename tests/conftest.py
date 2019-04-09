@@ -15,10 +15,17 @@ def airbnb_js_data() -> dict:
     Returns a fake JS data for the Airbnb classes
     """
     return {
+        'layout-init': {
+            'api_config': {
+                'key': 'api_key',
+            }
+        },
         'reduxData': {
             'homePDP': {
                 'listingInfo': {
                     'listing': {
+                        'id':
+                        '777',
                         'photos': [
                             {
                                 'sort_order': 2,

@@ -8,7 +8,7 @@ from typing import List, Optional
 
 from bs4 import BeautifulSoup
 
-from .http_client import HttpClient
+from .http_client import HttpClient, HttpResponse
 
 
 class ParserException(Exception):
@@ -121,6 +121,16 @@ class BaseSource(ABC):
         Domain regex to check if URL is suitable for this source
         """
 
+    def __get_url(self, url: str = None) -> str:
+        """
+        Get URL
+        """
+        if not url:
+            url = self.url
+        if not url:
+            raise ParserException('URL has not been provided.')
+        return url
+
     def _get_html_text_by_selector(self, selector: str) -> str:
         """
         Get HTML element text by the selector
@@ -129,17 +139,11 @@ class BaseSource(ABC):
 
         return getattr(element, 'text', '')
 
-    def get_title(self) -> str:
-        """
-        Get property title
-        """
-        return self._get_html_text_by_selector(self.title_css_selector)
-
-    def get_description(self) -> str:
-        """
-        Get property description
-        """
-        return self._get_html_text_by_selector(self.description_css_selector)
+    def _do_request(self, url: str) -> HttpResponse:
+        response = self.http_client.get(url)
+        if not response.ok:
+            raise ParserException('The HTTP request has failed.')
+        return response
 
     @abstractmethod
     def get_max_guests(self) -> Optional[int]:
@@ -177,15 +181,17 @@ class BaseSource(ABC):
         Get property cancellation policy
         """
 
-    def __get_url(self, url: str = None) -> str:
+    def get_title(self) -> str:
         """
-        Get URL
+        Get property title
         """
-        if not url:
-            url = self.url
-        if not url:
-            raise ParserException('URL has not been provided.')
-        return url
+        return self._get_html_text_by_selector(self.title_css_selector)
+
+    def get_description(self) -> str:
+        """
+        Get property description
+        """
+        return self._get_html_text_by_selector(self.description_css_selector)
 
     def check_url(self, url: str = None) -> bool:
         """
@@ -202,9 +208,7 @@ class BaseSource(ABC):
         """
         self.source_code = ''
         url = self.__get_url(url)
-        response = self.http_client.get(url)
-        if not response.ok:
-            raise ParserException('The HTTP request has failed.')
+        response = self._do_request(url)
         self.source_code = response.text
 
         return self.source_code

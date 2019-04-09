@@ -2,6 +2,8 @@
 Test suite for the airbnb source
 """
 
+from decimal import Decimal
+
 import pytest
 
 from booking_sites_parser.models import Address
@@ -35,9 +37,33 @@ def test_check_url():
 
 
 @pytest.mark.http
+def test_get_id_real_http():
+    """
+    Get_api_key should return the api key (real HTTP request)
+    """
+    airbnb = AirbnbPlus()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    assert airbnb.get_id() == 4950937
+
+
+@pytest.mark.http
+def test_get_api_key_real_http():
+    """
+    Get_api_key should return the api key (real HTTP request)
+    """
+    airbnb = AirbnbPlus()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    api_key = airbnb.get_api_key()
+    assert isinstance(api_key, str)
+    assert len(api_key) >= 10
+
+
+@pytest.mark.http
 def test_get_title_real_http():
     """
-    Get_title should return a property title (real HTTP request)
+    Get_title should return the property title (real HTTP request)
     """
     airbnb = AirbnbPlus()
     airbnb.url = PROPERTY_URL
@@ -50,7 +76,7 @@ def test_get_title_real_http():
 def test_get_max_guests_real_http():
     """
     Get_max_guests should return
-    a property max guests value (real HTTP request)
+    the property max guests value (real HTTP request)
     """
     airbnb = AirbnbPlus()
     airbnb.url = PROPERTY_URL
@@ -62,7 +88,7 @@ def test_get_max_guests_real_http():
 @pytest.mark.http
 def test_get_description_real_http():
     """
-    Get_description should return a property description (real HTTP request)
+    Get_description should return the property description (real HTTP request)
     """
     airbnb = AirbnbPlus()
     airbnb.url = PROPERTY_URL
@@ -74,7 +100,7 @@ def test_get_description_real_http():
 @pytest.mark.http
 def test_get_address_real_http():
     """
-    Get_address should return a property address (real HTTP request)
+    Get_address should return the property address (real HTTP request)
     """
     airbnb = AirbnbPlus()
     airbnb.url = PROPERTY_URL
@@ -87,7 +113,7 @@ def test_get_address_real_http():
 @pytest.mark.http
 def test_get_images_real_http():
     """
-    Get_description should return a list of
+    Get_description should return the list of
     property photos (real HTTP request)
     """
     airbnb = AirbnbPlus()
@@ -95,3 +121,16 @@ def test_get_images_real_http():
     airbnb.get_parser()
     photos = airbnb.get_images()
     assert PROPERTY_IMAGE in photos[0]
+
+
+@pytest.mark.http
+def test_get_price_real_http():
+    """
+    Get_price should return the property price (real HTTP request)
+    """
+    airbnb = AirbnbPlus()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    price = airbnb.get_price()
+    assert isinstance(price, Decimal)
+    assert 100 < price < 1000

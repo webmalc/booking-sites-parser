@@ -1,6 +1,9 @@
 """
 Test suite for the airbnb mixin
 """
+from decimal import Decimal
+
+from booking_sites_parser.http_client import HttpResponse
 from booking_sites_parser.sources.airbnb import Airbnb
 
 
@@ -13,6 +16,8 @@ def test_get_js_listing_node(airbnb_js_data):
     assert airbnb.get_js_listing_node('one', 'two', 'three') == 'result'
     assert airbnb.get_js_listing_node('one', 'two', 'invalid') is None
     assert airbnb.get_js_listing_node('one', 'two', 'three', 'four') is None
+    assert airbnb.get_js_listing_node(
+        'layout-init', 'api_config', 'key', root=True) == 'api_key'
     airbnb.get_js_data = lambda: None
     assert airbnb.get_js_listing_node('one') is None
 
@@ -119,3 +124,76 @@ def test_get_images_not_found():
     airbnb = Airbnb()
     airbnb._js_data = {'test': 'test'}  # pylint: disable=W0212
     assert airbnb.get_images() == []
+
+
+def test_get_api_key(airbnb_js_data):
+    """
+    Get_api_key should return the property api key
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    assert airbnb.get_api_key() == 'api_key'
+
+
+def test_get_id(airbnb_js_data):
+    """
+    Get_api_key should return the property id
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    assert airbnb.get_id() == 777
+
+
+def test_get_id_not_found():
+    """
+    Get_api_key should return None if the property ID is not found
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = {'test': 'test'}  # pylint: disable=W0212
+    assert airbnb.get_id() is None
+
+
+def test_get_price(patch_http_client, airbnb_js_data):
+    """
+    Get_price should return the property price
+    """
+    airbnb = Airbnb()
+    price = '12.45'
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    details = {
+        'pdp_listing_booking_details': [{
+            'p3_display_rate': {
+                'amount': price
+            }
+        }]
+    }
+    response = HttpResponse(200, '', True, lambda: details)
+    patch_http_client(lambda x: response)
+    price = airbnb.get_price()
+    assert price == Decimal(price)
+
+
+def test_get_price_not_found(patch_http_client, airbnb_js_data):
+    """
+    Get_price should return None if the property price is not found
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    response = HttpResponse(200, 'invalid response', True)
+    patch_http_client(lambda x: response)
+    price = airbnb.get_price()
+    assert price is None
+
+    airbnb._listing_price_data = 'invalid_listings'  # pylint: disable=W0212
+
+    price = airbnb.get_price()
+    assert price is None
+
+    airbnb._listing_price_data = [  # pylint: disable=W0212
+        {
+            'p3_display_rate': {}
+        }
+    ]
+
+    price = airbnb.get_price()
+    assert price is None
