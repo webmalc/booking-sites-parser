@@ -2,8 +2,6 @@
 AirbnbPlus module
 """
 
-from typing import List
-
 from booking_sites_parser.models import BaseSource
 from booking_sites_parser.sources.airbnb_mixin import AirbnbMixin
 
@@ -18,11 +16,6 @@ class AirbnbPlus(AirbnbMixin, BaseSource):
 
     title_css_selector: str = 'span._1xzp5ma3'
     description_css_selector: str = 'div._9qwh472 span._1ezjrwzo'
-
-    def get_services(self) -> List[str]:
-        """
-        Get property services
-        """
 
     def get_cancellation_policy(self) -> str:
         """

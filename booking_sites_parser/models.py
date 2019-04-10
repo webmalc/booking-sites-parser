@@ -4,7 +4,7 @@ Package models
 import re
 from abc import ABC, abstractmethod
 from decimal import Decimal
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from bs4 import BeautifulSoup
 
@@ -74,7 +74,8 @@ class Property():
     address: Optional[Address]
     price: Optional[Decimal]
     images: List[str] = []
-    services: List[str] = []
+    services: List[Any] = []
+    service_names: List[str] = []
     cancellation_policy: Optional[str]
 
     def __init__(self, url: str):
@@ -102,6 +103,7 @@ class BaseSource(ABC):
     url: Optional[str] = None
     url_regex_pattern: str = r'^https?:\/\/(www\.)?{domain}$'
     http_client: HttpClient = HttpClient()
+    _amenities: List[Any] = []
 
     # CSS selectors
     title_css_selector: str
@@ -170,9 +172,24 @@ class BaseSource(ABC):
         """
 
     @abstractmethod
-    def get_services(self) -> List[str]:
+    def _get_services(self) -> List[Any]:
         """
         Get property services
+        """
+
+    def get_services(self) -> List[Any]:
+        """
+        Get property services
+        """
+        if self._amenities:
+            return self._amenities
+        self._amenities = self._get_services()
+        return self._amenities
+
+    @abstractmethod
+    def get_service_names(self) -> List[str]:
+        """
+        Get property amenities names
         """
 
     @abstractmethod
@@ -242,6 +259,7 @@ class BaseSource(ABC):
         result.price = self.get_price()
         result.images = self.get_images()
         result.services = self.get_services()
+        result.service_names = self.get_service_names()
         result.cancellation_policy = self.get_cancellation_policy()
 
         return result

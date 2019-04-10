@@ -2,6 +2,7 @@
 Test suite for the airbnb mixin
 """
 from decimal import Decimal
+from unittest.mock import MagicMock
 
 from booking_sites_parser.http_client import HttpResponse
 from booking_sites_parser.sources.airbnb import Airbnb
@@ -16,8 +17,10 @@ def test_get_js_listing_node(airbnb_js_data):
     assert airbnb.get_js_listing_node('one', 'two', 'three') == 'result'
     assert airbnb.get_js_listing_node('one', 'two', 'invalid') is None
     assert airbnb.get_js_listing_node('one', 'two', 'three', 'four') is None
-    assert airbnb.get_js_listing_node(
-        'layout-init', 'api_config', 'key', root=True) == 'api_key'
+    assert airbnb.get_js_listing_node('layout-init',
+                                      'api_config',
+                                      'key',
+                                      root=True) == 'api_key'
     airbnb.get_js_data = lambda: None
     assert airbnb.get_js_listing_node('one') is None
 
@@ -197,3 +200,43 @@ def test_get_price_not_found(patch_http_client, airbnb_js_data):
 
     price = airbnb.get_price()
     assert price is None
+
+
+def test_get_services(airbnb_js_data):
+    """
+    Get_price should return a list with the property amenities
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    amenities = airbnb.get_services()
+    assert len(amenities) == 2
+    assert amenities.pop() == {'id': 2, 'name': 'TV'}
+    assert airbnb._amenities.pop(  # pylint: disable=W0212
+    ) == {
+        'id': 1,
+        'name': 'Breakfast',
+    }
+
+
+def test_get_service_names(airbnb_js_data):
+    """
+    Get_service_names should return a list with the property amenities names
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    amenities = airbnb.get_service_names()
+    assert amenities == ['Breakfast', 'TV']
+
+
+def test_get_services_saving_to_variable():
+    """
+    Get_should should save the result list to the model variable
+    """
+    airbnb = Airbnb()
+    airbnb._get_services = MagicMock(return_value=[  # pylint: disable=W0212
+        'test_result',
+    ])
+    airbnb.get_services()
+    airbnb.get_services()
+    airbnb.get_services()
+    airbnb._get_services.assert_called_once()  # pylint: disable=W0212

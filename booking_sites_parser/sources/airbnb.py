@@ -2,8 +2,6 @@
 Airbnb module
 """
 
-from typing import List
-
 from booking_sites_parser.models import BaseSource
 from booking_sites_parser.sources.airbnb_mixin import AirbnbMixin
 
@@ -25,11 +23,6 @@ class Airbnb(AirbnbMixin, BaseSource):
         """
         return str(
             self.get_js_listing_node(*self.description_js_selector)) or ''
-
-    def get_services(self) -> List[str]:
-        """
-        Get property services
-        """
 
     def get_cancellation_policy(self) -> str:
         """

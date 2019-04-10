@@ -21,6 +21,7 @@ class AirbnbMixin():
     parser: BeautifulSoup
     http_client: HttpClient
     _do_request: Callable[[object, str], HttpResponse]
+    get_services: Callable[[object], List[Any]]
 
     _js_data: Optional[dict] = None
     _listing_price_data: Optional[dict] = None
@@ -39,6 +40,7 @@ class AirbnbMixin():
         '&number_of_children=0&number_of_infants=0')
 
     max_guests_js_selector: List[str] = ['person_capacity']
+    amenities_js_selector: List[str] = ['listing_amenities']
     photos_js_selector: List[str] = ['photos']
     address_js_selectors: List[List[str]] = [
         ['p3_summary_address'],
@@ -119,6 +121,19 @@ class AirbnbMixin():
         self._listing_price_data = response.json.get(
             'pdp_listing_booking_details')
         return self._listing_price_data
+
+    def _get_services(self) -> List[Any]:
+        """
+        Get property amenities
+        """
+        return self.get_js_listing_node(*self.amenities_js_selector) or []
+
+    def get_service_names(self) -> List[str]:
+        """
+        Get property amenities names
+        """
+        amenities = self.get_services()
+        return [str(x.get('name')) for x in amenities]
 
     def get_price(self) -> Optional[Decimal]:
         """

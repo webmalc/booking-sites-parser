@@ -138,7 +138,8 @@ def test_sources_parse_method(source: BaseSource, patch_http_client):
     address = Address('country', 'region', 'street')
     price = Decimal(12.3)
     images = ['image_one', 'image_two']
-    services = ['service_one', 'service_two']
+    services = [{'name': 'service_one'}, {'name': 'service_two'}]
+    service_names = ['service_one', 'service_two']
     cancellation_policy = 'policy'
 
     source.get_title = MagicMock(return_value=title)
@@ -147,6 +148,7 @@ def test_sources_parse_method(source: BaseSource, patch_http_client):
     source.get_price = MagicMock(return_value=price)
     source.get_images = MagicMock(return_value=images)
     source.get_services = MagicMock(return_value=services)
+    source.get_service_names = MagicMock(return_value=service_names)
     source.get_cancellation_policy = MagicMock(
         return_value=cancellation_policy)
 
@@ -173,6 +175,9 @@ def test_sources_parse_method(source: BaseSource, patch_http_client):
 
     source.get_services.assert_called_once()
     assert result.services == services
+
+    source.get_service_names.assert_called_once()
+    assert result.service_names == service_names
 
     source.get_cancellation_policy.assert_called_once()
     assert result.cancellation_policy == cancellation_policy

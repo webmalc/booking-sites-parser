@@ -134,3 +134,16 @@ def test_get_price_real_http():
     price = airbnb.get_price()
     assert isinstance(price, Decimal)
     assert 100 < price < 1000
+
+
+@pytest.mark.http
+def test_get_services_real_http():
+    """
+    Get_price should return the list of property amenities (real HTTP request)
+    """
+    airbnb = AirbnbPlus()
+    airbnb.url = PROPERTY_URL
+    airbnb.get_parser()
+    amenities = [x.get('name') for x in airbnb.get_services()]
+    assert 'TV' in amenities
+    assert 'Air Conditioning' in amenities

@@ -2,7 +2,7 @@
 Base fixtures for the test suites
 """
 from decimal import Decimal
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 import pytest
 
@@ -24,6 +24,16 @@ def airbnb_js_data() -> dict:
             'homePDP': {
                 'listingInfo': {
                     'listing': {
+                        'listing_amenities': [
+                            {
+                                'id': 1,
+                                'name': 'Breakfast'
+                            },
+                            {
+                                'id': 2,
+                                'name': 'TV'
+                            },
+                        ],
                         'id':
                         '777',
                         'photos': [
@@ -131,7 +141,12 @@ def source() -> BaseSource:
             Get property images
             """
 
-        def get_services(self) -> List[str]:
+        def _get_services(self) -> List[Any]:
+            """
+            Get property services
+            """
+
+        def get_service_names(self) -> List[str]:
             """
             Get property services
             """
