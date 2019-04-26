@@ -34,5 +34,12 @@ def json_encode(results: Iterator[Property], indent=None) -> str:
                       default=lambda x: getattr(x, '__dict__', str(x)))
 
 
-if __name__ == '__main__':
+def run():
+    """
+    Run the main code
+    """
     print(json_encode(parse_urls(get_urls()), indent=4))
+
+
+if __name__ == '__main__':
+    run()
