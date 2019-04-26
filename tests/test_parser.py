@@ -10,6 +10,10 @@ import pytest
 from booking_sites_parser import BaseSource, Parser, ParserException, Property
 from booking_sites_parser.http_client import HttpResponse
 from booking_sites_parser.sources.airbnb import Airbnb
+from tests.sources.test_airbnb import PROPERTY_TITLE as AIRBNB_TITLE
+from tests.sources.test_airbnb import PROPERTY_URL as AIRBNB_URL
+from tests.sources.test_airbnb_plus import PROPERTY_TITLE as AIRBNB_PLUS_TITLE
+from tests.sources.test_airbnb_plus import PROPERTY_URL as AIRBNB_PLUS_URL
 
 
 def test_parser_initialization(base_parser: Parser):
@@ -28,10 +32,11 @@ def test_parser_initialization_with_sources(source):
     assert parser._sources[0] == source  # pylint: disable=W0212
 
 
-def test_parser_method_results_count(base_parser: Parser, source: BaseSource,
-                                     patch_http_client: Callable):
+def test_parse_method_results_count(base_parser: Parser, source: BaseSource,
+                                    patch_http_client: Callable):
     """
-    Parse method should return an iterable object with results
+    Parse method should return an iterable object with a length
+    equal to the number of valid URLs provided
     """
     html = '<title>Test HTML</title>'
     patch_http_client(lambda x: HttpResponse(200, html, True))
@@ -49,6 +54,22 @@ def test_parser_method_results_count(base_parser: Parser, source: BaseSource,
     result = next(properties)
     assert isinstance(result, Property)
     assert len(list(properties)) == should_return_count - 1
+
+
+@pytest.mark.http
+def test_parser_method_real_http(base_parser: Parser):
+    """
+    Parse method should return an iterable object with results
+    """
+    urls = [AIRBNB_URL, AIRBNB_PLUS_URL]
+    results = base_parser.parse(urls)
+
+    result = next(results)
+    assert result.title == AIRBNB_TITLE
+    result = next(results)
+    assert result.title == AIRBNB_PLUS_TITLE
+    with pytest.raises(StopIteration):
+        next(results)
 
 
 def test_sort_sources(base_parser: Parser, source: BaseSource):

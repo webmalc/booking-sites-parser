@@ -5,6 +5,7 @@ from typing import Iterable, Iterator, List, Tuple
 
 from .models import BaseSource, Optional, ParserException, Property
 from .sources.airbnb import Airbnb
+from .sources.airbnb_plus import AirbnbPlus
 
 
 class Parser():
@@ -21,7 +22,7 @@ class Parser():
         if sources:
             self._sources = sources
         else:
-            self._sources = [Airbnb()]
+            self._sources = [Airbnb(), AirbnbPlus()]
 
     def sort_sources_by_priority(self) -> None:
         """

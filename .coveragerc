@@ -1,0 +1,2 @@
+[run]
+omit = booking_sites_parser/__main__.*
