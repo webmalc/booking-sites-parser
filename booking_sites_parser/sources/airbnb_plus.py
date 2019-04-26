@@ -14,8 +14,7 @@ class AirbnbPlus(AirbnbMixin, BaseSource):
     id: str = 'airbnb'
     domain: str = r'airbnb.*plus\/.*'
 
-    title_css_selector: str = 'span._1xzp5ma3'
-    description_css_selector: str = 'div._9qwh472 span._1ezjrwzo'
+    title_css_selector: str = 'span._khkt1x3'
 
     def get_cancellation_policy(self) -> str:
         """

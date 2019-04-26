@@ -11,7 +11,7 @@ from booking_sites_parser.sources.airbnb_plus import AirbnbPlus
 
 PROPERTY_URL: str = 'https://www.airbnb.co.uk/rooms/plus/4950937'
 PROPERTY_TITLE: str = 'Peaceful Treehouse with Ocean View'
-PROPERTY_DESCRIPTION: str = 'Rest well, then wake up to explore'
+PROPERTY_DESCRIPTION: str = 'Enjoy panoramic ocean and forest views'
 PROPERTY_ADDRESS: str = 'Aptos, California, United States'
 PROPERTY_MAX_GUESTS: int = 6
 PROPERTY_IMAGE = 'pictures/c10fc509-e309-4aad-b1af-7dd7c3ad880c.jpg'

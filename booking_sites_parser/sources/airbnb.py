@@ -15,14 +15,6 @@ class Airbnb(AirbnbMixin, BaseSource):
     domain: str = r'airbnb((?!plus\/).)*'
 
     title_css_selector: str = 'span._18hrqvin'
-    description_js_selector = ['sectioned_description', 'description']
-
-    def get_description(self) -> str:
-        """
-        Get property description
-        """
-        return str(
-            self.get_js_listing_node(*self.description_js_selector)) or ''
 
     def get_cancellation_policy(self) -> str:
         """

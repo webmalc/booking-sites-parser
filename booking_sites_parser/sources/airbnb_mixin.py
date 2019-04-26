@@ -42,11 +42,19 @@ class AirbnbMixin():
     max_guests_js_selector: List[str] = ['person_capacity']
     amenities_js_selector: List[str] = ['listing_amenities']
     photos_js_selector: List[str] = ['photos']
+    description_js_selector = ['sectioned_description', 'description']
     address_js_selectors: List[List[str]] = [
         ['p3_summary_address'],
         ['location_title'],
     ]
     api_key_js_path: List[str] = ['layout-init', 'api_config', 'key']
+
+    def get_description(self) -> str:
+        """
+        Get property description
+        """
+        return str(
+            self.get_js_listing_node(*self.description_js_selector)) or ''
 
     def get_address(self) -> Optional[Address]:
         """
