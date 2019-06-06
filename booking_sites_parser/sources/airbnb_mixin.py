@@ -40,6 +40,7 @@ class AirbnbMixin():
         '&number_of_children=0&number_of_infants=0')
 
     max_guests_js_selector: List[str] = ['person_capacity']
+    title_js_selector: List[str] = ['name']
     amenities_js_selector: List[str] = ['listing_amenities']
     photos_js_selector: List[str] = ['photos']
     description_js_selector = ['sectioned_description', 'description']
@@ -71,6 +72,12 @@ class AirbnbMixin():
         Get property maximum occupancy in guests
         """
         return self.get_js_listing_node(*self.max_guests_js_selector)
+
+    def get_title(self) -> str:
+        """
+        Get property title
+        """
+        return self.get_js_listing_node(*self.title_js_selector) or ''
 
     def get_images(self) -> List[str]:
         """
@@ -180,13 +187,6 @@ class AirbnbMixin():
         Get the API key from the JS data
         """
         return self.get_js_listing_node(*self.api_key_js_path, root=True)
-
-    # def get_api_key_from_html(self) -> Optional[str]:
-    #     """
-    #     Get the API key from the HTML source
-    #     """
-    #     # self.parser.select_one('meta#_bootstrap-layout-init')['content']
-    #     return 'incorrect api key'
 
     def get_js_data(self) -> Optional[dict]:
         """
