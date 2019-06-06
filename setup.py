@@ -6,11 +6,11 @@ from setuptools import find_packages, setup
 HERE = pathlib.Path(__file__).parent
 
 README = (HERE / 'README.md').read_text()
-DESC = 'Parser for booking sites such as Booking.com, Homeaway, Airbnb'
+DESC = 'Parser for booking sites such as Booking.com, Homeaway.com, Airbnb.com'
 
 setup(
     name='booking-sites-parser',
-    version='0.0.2',
+    version='0.0.3',
     description=DESC,
     long_description=README,
     long_description_content_type='text/markdown',

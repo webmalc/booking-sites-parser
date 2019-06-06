@@ -1,5 +1,5 @@
 # booking-sites-parser
-Parser for booking sites such as Booking.com, Homeaway, Airbnb
+Parser for booking sites such as Booking.com, Homeaway.com, Airbnb.com
 
 ## Usage
 The parser can be executed via the command line. 
