@@ -86,3 +86,20 @@ def test_get_images_real_http():
     booking.get_parser()
     images = booking.get_images()
     assert PROPERTY_IMAGE in images[0]
+
+
+@pytest.mark.http
+def test_get_services_real_http():
+    """
+    Get_price should return the list of property facilities (real HTTP request)
+    """
+    booking = Booking()
+    booking.url = PROPERTY_URL
+    booking.get_parser()
+    facilities = booking.get_services()
+    assert facilities[0].name == 'Tickets to attractions or shows'
+    assert facilities[-1].name == 'Chinese'
+    assert facilities[-1].category == 'Languages spoken'
+    facilities_names = booking.get_service_names()
+    assert 'Languages spoken: Turkish' in facilities_names
+    assert 'Food & Drink: Breakfast in the room' in facilities_names
