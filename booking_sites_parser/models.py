@@ -108,6 +108,7 @@ class BaseSource(ABC):
     # CSS selectors
     title_css_selector: str
     description_css_selector: str
+    address_css_selector: str
 
     @property
     @abstractmethod
@@ -151,12 +152,6 @@ class BaseSource(ABC):
     def get_max_guests(self) -> Optional[int]:
         """
         Get property maximum occupancy in guests
-        """
-
-    @abstractmethod
-    def get_address(self) -> Optional[Address]:
-        """
-        Get property address
         """
 
     @abstractmethod
@@ -209,6 +204,16 @@ class BaseSource(ABC):
         Get property description
         """
         return self._get_html_text_by_selector(self.description_css_selector)
+
+    def get_address(self) -> Optional[Address]:
+        """
+        Get property address
+        """
+        address_str = self._get_html_text_by_selector(
+            self.address_css_selector)
+        if address_str:
+            return Address.create_from_string(address_str)
+        return None
 
     def check_url(self, url: str = None) -> bool:
         """

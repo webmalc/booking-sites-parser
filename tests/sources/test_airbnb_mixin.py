@@ -93,6 +93,24 @@ def test_get_js_data_fallback():
     assert data == {'test': 12, '15': 11}
 
 
+def test_get_title_description(airbnb_js_data):
+    """
+    Get_description should return the property description
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    assert airbnb.get_description() == 'test_description'
+
+
+def test_get_title(airbnb_js_data):
+    """
+    Get_description should return the property title
+    """
+    airbnb = Airbnb()
+    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
+    assert airbnb.get_title() == 'test_name'
+
+
 def test_get_max_guests(airbnb_js_data):
     """
     Get_max_guests should return a property max guests value

@@ -49,6 +49,8 @@ def airbnb_js_data() -> dict:
                                 'x_large': 'image_1'
                             },
                         ],
+                        'name':
+                        'test_name',
                         'person_capacity':
                         3,
                         'location_title':
@@ -120,11 +122,7 @@ def source() -> BaseSource:
 
         title_css_selector = 'span.title'
         description_css_selector: str = 'div.description'
-
-        def get_address(self) -> Optional[Address]:
-            """
-            Get property address
-            """
+        address_css_selector: str = 'div.address'
 
         def get_max_guests(self) -> Optional[int]:
             """

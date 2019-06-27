@@ -35,15 +35,6 @@ def test_check_url():
         'https://www.airbnb.co.uk/rooms/plus/4950937?guests=1&adults=1')
 
 
-def test_get_title_description(airbnb_js_data):
-    """
-    Get_description should return the property description
-    """
-    airbnb = Airbnb()
-    airbnb._js_data = airbnb_js_data  # pylint: disable=W0212
-    assert airbnb.get_description() == 'test_description'
-
-
 @pytest.mark.http
 def test_get_id_real_http():
     """
@@ -127,8 +118,8 @@ def test_get_images_real_http():
     airbnb = Airbnb()
     airbnb.url = PROPERTY_URL
     airbnb.get_parser()
-    photos = airbnb.get_images()
-    assert PROPERTY_IMAGE in photos[0]
+    images = airbnb.get_images()
+    assert PROPERTY_IMAGE in images[0]
 
 
 @pytest.mark.http

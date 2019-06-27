@@ -10,6 +10,8 @@ import pytest
 from booking_sites_parser import BaseSource, Parser, ParserException, Property
 from booking_sites_parser.http_client import HttpResponse
 from booking_sites_parser.sources.airbnb import Airbnb
+from booking_sites_parser.sources.airbnb_plus import AirbnbPlus
+from booking_sites_parser.sources.booking import Booking
 from tests.sources.test_airbnb import PROPERTY_TITLE as AIRBNB_TITLE
 from tests.sources.test_airbnb import PROPERTY_URL as AIRBNB_URL
 from tests.sources.test_airbnb_plus import PROPERTY_TITLE as AIRBNB_PLUS_TITLE
@@ -22,6 +24,14 @@ def test_parser_initialization(base_parser: Parser):
     """
     assert isinstance(base_parser, Parser)
     assert isinstance(base_parser._sources[0], Airbnb)  # pylint: disable=W0212
+    assert isinstance(
+        base_parser._sources[1],  # pylint: disable=W0212
+        AirbnbPlus,
+    )
+    assert isinstance(
+        base_parser._sources[2],  # pylint: disable=W0212
+        Booking,
+    )
 
 
 def test_parser_initialization_with_sources(source):

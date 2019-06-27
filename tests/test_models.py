@@ -215,3 +215,20 @@ def test_sources_get_descriptions(source: BaseSource, patch_http_client):
     source.get_parser()
 
     assert source.get_description() == description
+
+
+def test_sources_get_address(source: BaseSource, patch_http_client):
+    """
+    Get_address should return an address object
+    """
+    address_str = '12 Main street, Region, Country'
+    html = '<div class="address">{}</div>'.format(address_str)
+    patch_http_client(lambda x: HttpResponse(200, html, True))
+    source.get_parser()
+
+    address = source.get_address()
+    assert isinstance(address, Address)
+    assert address.country == 'Country'
+    assert address.region == 'Region'
+    assert address.address == '12 Main street'
+    assert str(address) == address_str
