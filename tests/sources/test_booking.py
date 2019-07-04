@@ -3,6 +3,7 @@ Test suite for the booking source
 """
 import pytest
 
+from booking_sites_parser.http_client import HttpResponse
 from booking_sites_parser.models import Address
 from booking_sites_parser.sources.booking import Booking
 
@@ -37,6 +38,51 @@ def test_check_url():
 
     assert not bookign.check_url('http://airbnb.com')
     assert not bookign.check_url('http://bookign.ru')
+
+
+def test_get_images(patch_http_client):
+    """
+    Get_images should return the property images
+    """
+    html = '<div id="photos_distinct"><a href="/images/max400/1.jpg">\
+</a><a href="/images/max400/2.png"></a></div>'
+
+    patch_http_client(lambda x: HttpResponse(200, html, True))
+    booking = Booking()
+    booking.url = PROPERTY_URL
+    booking.get_parser()
+    images = booking.get_images()
+    assert images == ['/images/max1024x768/1.jpg', '/images/max1024x768/2.png']
+
+
+def test_get_services(patch_http_client):
+    """
+    Get_images should return the property facilities
+    """
+    html = '<div class="facilitiesChecklistSection"><h5>Category 1</h5>\
+<ul><li>facility 1</li><li>facility 1.1</li></ul></div>'
+
+    html += '<div class="facilitiesChecklistSection"><h5>Category 2</h5>\
+<ul><li><span>facility 2</span></li></ul></div>'
+
+    patch_http_client(lambda x: HttpResponse(200, html, True))
+    booking = Booking()
+    booking.url = PROPERTY_URL
+    booking.get_parser()
+    facilities = booking.get_services()
+
+    assert facilities[0].category == 'Category 1'
+    assert facilities[0].name == 'facility 1'
+    assert facilities[1].category == 'Category 1'
+    assert facilities[1].name == 'facility 1.1'
+    assert facilities[2].category == 'Category 2'
+    assert facilities[2].name == 'facility 2'
+
+    facilities_names = booking.get_service_names()
+    assert facilities_names == [
+        'Category 1: facility 1', 'Category 1: facility 1.1',
+        'Category 2: facility 2'
+    ]
 
 
 @pytest.mark.http

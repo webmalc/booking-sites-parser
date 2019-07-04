@@ -10,6 +10,7 @@ from booking_sites_parser.models import Address
 from booking_sites_parser.sources.airbnb_plus import AirbnbPlus
 
 PROPERTY_URL: str = 'https://www.airbnb.co.uk/rooms/plus/4950937'
+PROPERTY_ID: int = 4950937
 PROPERTY_TITLE: str = 'Peaceful Treehouse with Ocean View'
 PROPERTY_DESCRIPTION: str = 'Enjoy panoramic ocean and forest views'
 PROPERTY_ADDRESS: str = 'Aptos, California, United States'
@@ -44,7 +45,7 @@ def test_get_id_real_http():
     airbnb = AirbnbPlus()
     airbnb.url = PROPERTY_URL
     airbnb.get_parser()
-    assert airbnb.get_id() == 4950937
+    assert airbnb.get_id() == PROPERTY_ID
 
 
 @pytest.mark.http
@@ -146,4 +147,4 @@ def test_get_services_real_http():
     airbnb.get_parser()
     amenities = [x.get('name') for x in airbnb.get_services()]
     assert 'TV' in amenities
-    assert 'Air Conditioning' in amenities
+    assert 'Air conditioning' in amenities

@@ -9,12 +9,13 @@ import pytest
 from booking_sites_parser.models import Address
 from booking_sites_parser.sources.airbnb import Airbnb
 
-PROPERTY_URL: str = 'https://www.airbnb.com/rooms/2075509'
-PROPERTY_TITLE: str = 'Stunning home in central Tokyo'
-PROPERTY_DESCRIPTION: str = 'We can also offer a concierge service to'
-PROPERTY_ADDRESS: str = 'Minato, Tokyo, Japan'
-PROPERTY_MAX_GUESTS: int = 9
-PROPERTY_IMAGE = '45604883/54451b1c_original.jpg?aki_policy=xx_large'
+PROPERTY_URL: str = 'https://www.airbnb.com/rooms/14299729'
+PROPERTY_ID: int = 14299729
+PROPERTY_TITLE: str = 'Irresistable Notting Hill Studio'
+PROPERTY_DESCRIPTION: str = 'This beautiful and bright studio is on the first'
+PROPERTY_ADDRESS: str = 'London'
+PROPERTY_MAX_GUESTS: int = 2
+PROPERTY_IMAGE = 'pictures/2b22c4ba-b4ae-402c-8461-baea2c6f088b.jpg'
 
 
 def test_check_url():
@@ -43,7 +44,7 @@ def test_get_id_real_http():
     airbnb = Airbnb()
     airbnb.url = PROPERTY_URL
     airbnb.get_parser()
-    assert airbnb.get_id() == 2075509
+    assert airbnb.get_id() == PROPERTY_ID
 
 
 @pytest.mark.http
@@ -144,5 +145,5 @@ def test_get_services_real_http():
     airbnb.url = PROPERTY_URL
     airbnb.get_parser()
     amenities = [x.get('name') for x in airbnb.get_services()]
-    assert 'Breakfast' in amenities
+    assert 'Air conditioning' in amenities
     assert 'Kitchen' in amenities
